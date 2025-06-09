@@ -13,12 +13,24 @@ export async function getLastFaucetRedemptionForAccount(
   client: SupabaseClient,
   slug: string,
   account: string
-): Promise<PostgrestSingleResponse<FaucetRedemption>> {
+): Promise<PostgrestSingleResponse<FaucetRedemption | null>> {
   return client
     .from("faucet_redemptions")
     .select("*")
     .eq("faucet_slug", slug)
     .eq("account", account)
     .order("created_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
+}
+
+export async function createFaucetRedemption(
+  client: SupabaseClient,
+  slug: string,
+  account: string
+) {
+  return client.from("faucet_redemptions").insert({
+    faucet_slug: slug,
+    account,
+  });
 }

@@ -47,16 +47,17 @@ const main = async () => {
 
   const signer = new Wallet(privateKey);
 
-  const cardConfig = community.primarySafeCardConfig;
+  // const cardConfig = community.primarySafeCardConfig;
 
   const cardManagerMap: Record<string, CommunityWithContracts> = {};
 
-  const cardManagerInstanceId = process.env.CARD_MANAGER_INSTANCE_ID;
-  if (!cardManagerInstanceId) {
+  const instance = process.env.CARD_MANAGER_INSTANCE_ID;
+  if (!instance) {
     throw new Error("CARD_MANAGER_INSTANCE_ID is not set");
   }
 
-  const instance = `${cardConfig.chain_id}:${cardConfig.address}:${cardManagerInstanceId}`;
+  // const instance = `${cardConfig.chain_id}:${cardConfig.address}:${cardManagerInstanceId}`;
+  console.log("instance", instance);
 
   if (!cardManagerMap[instance]) {
     const contracts: string[] = [];
@@ -88,15 +89,13 @@ const main = async () => {
 
     console.log("contracts", communityMap.contracts);
 
-    const owner = await instanceOwner(
-      communityMap.community,
-      cardManagerInstanceId
-    );
+    const owner = await instanceOwner(communityMap.community, instance);
+    console.log("owner", owner);
     if (owner === ZeroAddress) {
       const ccalldata = createInstanceCallData(
         communityMap.community,
         communityMap.contracts,
-        cardManagerInstanceId
+        instance
       );
 
       const hash = await bundler.call(
@@ -118,7 +117,7 @@ const main = async () => {
     const calldata = updateInstanceContractsCallData(
       communityMap.community,
       communityMap.contracts,
-      cardManagerInstanceId
+      instance
     );
 
     const hash = await bundler.call(
