@@ -10,6 +10,7 @@ export interface Faucet {
   description: string;
   amount: number;
   frequency: number;
+  salt: string;
 }
 
 export async function getFaucetBySlug(

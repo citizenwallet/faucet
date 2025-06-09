@@ -1,7 +1,7 @@
 "use client";
 
 import { Faucet } from "@/db/faucets";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrencyNumber } from "@/lib/currency";
 import { CheckCircle, CopyIcon, Loader2, XCircleIcon } from "lucide-react";
@@ -28,6 +28,7 @@ export default function Redeem({
   decimals?: number;
   redirect?: string;
 }) {
+  const redirectingRef = useRef(false);
   const readyRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -56,16 +57,28 @@ export default function Redeem({
 
   const ready = !loading && !error;
 
+  const handleRedirect = useCallback(() => {
+    if (redirect && !redirectingRef.current) {
+      redirectingRef.current = true;
+      setTimeout(() => {
+        window.location.href = redirect;
+      }, 2000);
+    }
+  }, [redirect]);
+
   useEffect(() => {
     if (ready && !readyRef.current) {
       readyRef.current = true;
-      console.log("ready");
 
-      if (redirect) {
-        window.location.href = redirect;
-      }
+      handleRedirect();
     }
-  }, [ready, redirect]);
+  }, [ready, redirect, handleRedirect]);
+
+  useEffect(() => {
+    if (error) {
+      handleRedirect();
+    }
+  }, [error, handleRedirect]);
 
   if (empty) {
     return (
