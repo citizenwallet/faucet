@@ -22,16 +22,6 @@ const nextConfig: NextConfig = {
         hostname: process.env.IPFS_DOMAIN ?? "",
         port: "",
       },
-      {
-        protocol: "https",
-        hostname: process.env.ASSETS_DOMAIN ?? "",
-        port: "",
-      },
-      {
-        protocol: "https",
-        hostname: process.env.SUPABASE_BUCKET_DOMAIN ?? "",
-        port: "",
-      },
     ],
   },
 };
